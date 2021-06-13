@@ -134,9 +134,9 @@ class Action:
     def print_grounds(self):
         i = 0
         for g in self.grounds:
-            print "Grounding " + str(i)
-            print g
-            print ""
+            print ("Grounding " + str(i))
+            print (g)
+            print ("")
             i = i + 1
     def __str__(self):
         return "{0}({1})\nPre: {2}\nPost: {3}".format(self.name, join_list(self.params), join_list(self.pre), join_list(self.post))
@@ -335,7 +335,7 @@ def create_world(filename):
 
                 pstate = ParseState.ACTION_DECLARATION
 
-    for k, v in w.actions.iteritems():
+    for k, v in w.actions.items():
         v.generate_groundings(w)
 
     return w
@@ -375,17 +375,17 @@ def linear_solver_helper(world, state, goals, current_plan, depth = 0):
         goal = goals[i]
 
         if debug:
-            print padding + "Current Plan: {0}".format(" -> ".join([x.simple_str() for x in current_plan]))
-            print padding + "Subgoal: {0}".format(goal)
-            print padding + "Other Goals: {0}".format(", ".join([str(x) for x in goals[i+1:]]))
-            print padding + "State: {0}".format(", ".join([str(s) for s in state]))
+            print (padding + "Current Plan: {0}".format(" -> ".join([x.simple_str() for x in current_plan])))
+            print (padding + "Subgoal: {0}".format(goal))
+            print (padding + "Other Goals: {0}".format(", ".join([str(x) for x in goals[i+1:]])))
+            print (padding + "State: {0}".format(", ".join([str(s) for s in state])))
             raw_input("")
 
         if satisfied(state, goal):
             # recurse
             if debug:
                 raw_input(padding + "Satisfied already")
-                print ""
+                print ("")
             i += 1
             continue
         
@@ -394,8 +394,8 @@ def linear_solver_helper(world, state, goals, current_plan, depth = 0):
         # otherwise, we need to find a subgoal that will get us to the goal
         # find all the grounded actions which will satisfy the goal
         if debug:
-            print padding + "List of possible actions that satisfy {0}:".format(goal)
-            print "\n".join([padding + x.simple_str() for x in possible_actions])
+            print (padding + "List of possible actions that satisfy {0}:".format(goal))
+            print ("\n".join([padding + x.simple_str() for x in possible_actions]))
             raw_input("")
 
         found = False
@@ -403,27 +403,27 @@ def linear_solver_helper(world, state, goals, current_plan, depth = 0):
         for action in possible_actions:
 
             if debug:
-                print padding + "Trying next action to satisfy {0}:".format(goal)
-                print padding + str(action).replace("\n", "\n" + padding)
+                print (padding + "Trying next action to satisfy {0}:".format(goal))
+                print (padding + str(action).replace("\n", "\n" + padding))
                 raw_input("")
 
             # check if there is at least 1 action for each precondition which satisfies it
             if not preconditions_reachable(world, action):
                 if debug:
-                    print padding + "Some preconditions not reachable by any possible action. Skipping..."
+                    print (padding + "Some preconditions not reachable by any possible action. Skipping...")
                     raw_input("")
                 continue
             
             # check if the action directly contradicts another goal
             if contains_contradiction(goals, action):
                 if debug:
-                    print padding + "Action violates another goal state. Skipping..."
+                    print (padding + "Action violates another goal state. Skipping...")
                     raw_input("")
                 continue
             
             # if we can't obviously reject it as unreachable, we have to recursively descend.
             if debug:
-                print padding + "Action cannot be trivially rejected as unreachable. Descending..."
+                print (padding + "Action cannot be trivially rejected as unreachable. Descending...")
                 raw_input("")
 
             temp_state = list(state)
@@ -437,12 +437,12 @@ def linear_solver_helper(world, state, goals, current_plan, depth = 0):
             # we were unable to find 
             if solution is None:
                 if debug:
-                    print padding + "No solution found with this action. Skipping..."
+                    print (padding + "No solution found with this action. Skipping...")
                 current_plan.pop()
                 continue
 
             if debug:
-                print padding + "Possible solution found!"
+                print (padding + "Possible solution found!")
                 raw_input("")
 
             
@@ -464,14 +464,14 @@ def linear_solver_helper(world, state, goals, current_plan, depth = 0):
                 current_plan.pop()
                 continue"""
                 if debug:
-                    print padding + "Path satisfies {0} but clobbers other goals: {1}".format(goal, ", ".join([str(x) for x in clobbered]))
-                    print padding + "Re-adding the clobbered goals to the end of the list"
+                    print (padding + "Path satisfies {0} but clobbers other goals: {1}".format(goal, ", ".join([str(x) for x in clobbered])))
+                    print (padding + "Re-adding the clobbered goals to the end of the list")
                     raw_input("")
                 [goals.remove(x) for x in clobbered]
                 [goals.append(x) for x in clobbered]
                 i -= clob_len
                 if debug:    
-                    print padding + "New goals: {0}".format(", ".join([str(x) for x in goals]))
+                    print ( padding + "New goals: {0}".format(", ".join([str(x) for x in goals])))
                     raw_input("")
                 
 
@@ -487,7 +487,7 @@ def linear_solver_helper(world, state, goals, current_plan, depth = 0):
             plan.append(action)
             
             if debug:
-                print padding + "New State: " + ", ".join([str(x) for x in state])
+                print (padding + "New State: " + ", ".join([str(x) for x in state]))
                 raw_input("")
 
             i += 1
@@ -496,9 +496,9 @@ def linear_solver_helper(world, state, goals, current_plan, depth = 0):
 
         if not found:
             if debug:
-                print ""
+                print ("")
                 raw_input("++" + padding + "No actions found to satisfy this subgoal. Backtracking...")
-                print ""
+                print ("")
             #current_plan.pop()
             return None
 
@@ -541,7 +541,7 @@ def precondition_reachable(world, pre):
     if pre.reached(world):
         return True
 
-    for key,action in world.actions.iteritems():
+    for key,action in world.actions.items():
         for ground in action.grounds:
             for p in ground.post:
                 if strong_match(p, pre):
@@ -563,7 +563,7 @@ def update_state(state, post):
 # Gets all grounded actions which have a post condition that includes the goal
 def get_possible_grounds(world, goal):
     results = []
-    for key,action in world.actions.iteritems():
+    for key,action in world.actions.items():
         for ground in action.grounds:
             for p in ground.post:
                 if strong_match(p, goal):
@@ -572,7 +572,7 @@ def get_possible_grounds(world, goal):
     return results
 
 def print_plan(plan):
-    print "Plan: {0}".format(" -> ".join([x.simple_str() for x in plan]))
+    print ("Plan: {0}".format(" -> ".join([x.simple_str() for x in plan])))
 
 
 def main():
@@ -580,15 +580,15 @@ def main():
 
     # Did someone start us at the goal?
     already_solved = w.goal_reached()
-    print "Goal already solved? {0}".format(already_solved)
+    print ("Goal already solved? {0}".format(already_solved))
 
     if not already_solved:
-        print "Solving..."
+        print ("Solving...")
         solution = linear_solver(w)
         if solution is None:
-            print "No solution found :("
+            print ("No solution found :(")
         else:
-            print "Solved!"
+            print ("Solved!")
             print_plan(solution)
             #from show_strips import show_solution
             #show_solution(solution)
